@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_add"
+        android:enabled="true"
+        android:icon="@drawable/baseline_directions_run_24"
+        android:title="Add New Run"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_calendar"
+        android:enabled="true"
+        android:icon="@drawable/baseline_date_range_24"
+        android:title="Check Previous Runs"
+        app:showAsAction="ifRoom" />
+</menu>

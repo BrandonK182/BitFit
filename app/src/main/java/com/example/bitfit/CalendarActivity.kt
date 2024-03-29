@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-public var runs = mutableListOf<RunningData>()
+
 
 class CalendarActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,11 +19,9 @@ class CalendarActivity : AppCompatActivity() {
         setContentView(R.layout.activity_calendar)
 
         var rv_calendar = findViewById<RecyclerView>(R.id.rv_calendar)
-        var newRun = intent.getSerializableExtra(item_name) as RunningData
-        val adapter = CalendarAdapter(runs)
+        val adapter = CalendarAdapter(this, runs)
         val deleteButton = findViewById<Button>(R.id.btn_delete)
 
-        runs.add(newRun)
 
         lifecycleScope.launch {
             (application as BitFitApplication).db.bitFitDao().getAll().collect { databaseList ->

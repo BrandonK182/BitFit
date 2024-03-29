@@ -1,5 +1,6 @@
 package com.example.bitfit
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,9 +9,9 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class CalendarAdapter(private val runs: List<RunningData>) : RecyclerView.Adapter<CalendarAdapter.RunViewHolder>() {
+class CalendarAdapter(private val context: Context, private val runs: List<RunningData>) : RecyclerView.Adapter<CalendarAdapter.RunViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RunViewHolder {
-        val view = LayoutInflater.from(parent.context)
+        val view = LayoutInflater.from(context)
             .inflate(R.layout.day_layout, parent, false)
         return RunViewHolder(view)
     }

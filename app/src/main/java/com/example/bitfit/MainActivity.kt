@@ -3,45 +3,70 @@ package com.example.bitfit
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
+import com.example.bitfit.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.launch
 import java.util.Date
 
-
-const val item_name = "TODAY_RUN"
-
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val et_distance : EditText = findViewById(R.id.etDistance)
-        val et_speed : EditText = findViewById(R.id.etSpeed)
-        val btn_submit : Button = findViewById(R.id.btnSubmit)
-        val btn_check : Button = findViewById(R.id.btnCheck)
-
-        var distance : Float = 0F
-        var speed : Int = 0
-
-        var d = Date()
-        var today = d.date.toString()+"-"+d.month.toString()+ "-" + d.year.toString()
-
-        btn_submit.setOnClickListener(){
-            distance = et_distance.text.toString().toFloat()
-            speed = et_speed.text.toString().toInt()
-            val currentRun = RunningData(today,distance,speed)
-            et_distance.text.clear()
-            et_speed.text.clear()
-            val intent = Intent(this, CalendarActivity::class.java)
-            intent.putExtra(item_name,currentRun)
-            //save the current item into the database
-            startActivity(intent)
+        lifecycleScope.launch {
+            (application as BitFitApplication).db.bitFitDao().getAll().collect { databaseList ->
+                databaseList.map { entity ->
+                    RunningData(
+                        entity.date,
+                        entity.distance,
+                        entity.speed
+                    )
+                }.also { mappedList ->
+                    runs.clear()
+                    runs.addAll(mappedList)
+                }
+            }
         }
 
-        //button to check the listing without adding a new one in
-        btn_check.setOnClickListener(){
-            val intent = Intent(this, CalendarActivityNoAdd::class.java)
-            startActivity(intent)
+        val fragmentManager: FragmentManager = supportFragmentManager
+
+        // define your fragments here
+        val calendarFragment: Fragment = CalendarFragment()
+        val addFragment: Fragment = AddFragment()
+
+        // Call helper method to swap the FrameLayout with the fragment
+        replaceFragment(AddFragment())
+
+        val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
+
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            lateinit var fragment: Fragment
+            when (item.itemId) {
+                R.id.action_add ->
+                    fragment = addFragment
+                R.id.action_calendar ->
+                    fragment = calendarFragment
+            }
+            replaceFragment(fragment)
+            true
         }
+        bottomNavigationView.selectedItemId = R.id.action_add
+    }
+
+    private fun replaceFragment(aFragment: Fragment) {
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.frame_layout, aFragment)
+        fragmentTransaction.commit()
     }
 }

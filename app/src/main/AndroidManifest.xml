@@ -18,9 +18,6 @@
         <activity android:name=".CalendarActivity"
             android:exported="true" />
 
-        <activity android:name=".CalendarActivityNoAdd"
-            android:exported="true" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true">
